@@ -20,14 +20,34 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
- */
+*/
 
 package main
 
 import (
 	"fmt"
+	"os"
 )
 
+var logger *ssLog
+
+func Initialize() (err error) {
+	if logger, err = NewSSLog(LOG_TANK_CONSOLE, ""); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func Usage() {
+	logger.Trace(nil, "test for log ")
+}
+
 func main() {
-	fmt.Println("hello world")
+	if err := Initialize(); err != nil {
+		fmt.Println("initailize the project failed.")
+		os.Exit(-1)
+	}
+
+	Usage()
 }
