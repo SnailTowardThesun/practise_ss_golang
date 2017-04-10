@@ -14,4 +14,4 @@ dpendencies:
 test:
     override:
         - (cd trunk && bash build.sh)
-        - (cd trunk && ./objs/ss_golang)
+        - (cd trunk/src && go test -v -race ./...)
