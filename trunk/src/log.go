@@ -45,7 +45,7 @@ const (
 )
 
 type Context interface {
-	GetID() int
+	GetID() uint32
 }
 
 type ssLog struct {

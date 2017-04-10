@@ -25,26 +25,30 @@ SOFTWARE.
 package main
 
 type Sock5Connection struct {
-	ConnID int
+	ConnID uint32
 }
 
-var Sock5ConnBasicID int = 100
+var Sock5ConnBasicID uint32 = 100
 
 func NewSock5Conn() *Sock5Connection {
 	conn := &Sock5Connection{
 		ConnID : Sock5ConnBasicID,
 	}
 	
-	Sock5ConnBasicID += 1
+	// when the basic id is too large, roll over again.
+	if Sock5ConnBasicID > 0xffffff00 {
+		Sock5ConnBasicID = 100
+	} else {
+		Sock5ConnBasicID += 1
+	}
+	
 	return conn
 }
 
-func (v *Sock5Connection) GetID() int {
+func (v *Sock5Connection) GetID() uint32 {
 	return v.ConnID
 }
 
 func (v *Sock5Connection) Listen(port string) (err error) {
 	return
 }
-
-
