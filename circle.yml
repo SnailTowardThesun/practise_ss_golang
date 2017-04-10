@@ -1,0 +1,16 @@
+general:
+    branches:
+        only:
+            - master
+
+machine:
+    environment:
+        GOPATH: ${HOME}/go
+
+dpendencies:
+    override:
+        - mkdir -p $GOPATH && echo $GOPATH
+
+test:
+    override:
+        - (cd trunk && go run ./src/main.go)
