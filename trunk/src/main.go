@@ -25,22 +25,28 @@ SOFTWARE.
 package main
 
 import (
+	"flag"
 	"fmt"
 	"os"
 )
 
-var logger *ssLog
+var _logger *ssLog
+var _version string = "1.0.0"
+var _author string = "ME_KUN_HAN"
+var _email string = "hanvskun@hotmail.com"
 
 func Initialize() (err error) {
-	if logger, err = NewSSLog(LOG_TANK_CONSOLE, ""); err != nil {
+	if _logger, err = NewSSLog(LOG_TANK_CONSOLE, ""); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-func Usage() {
-	logger.Trace(nil, "test for log ")
+func ProInfo() {
+	_logger.Trace(nil, fmt.Sprintf("SS_GOLANG %v Copyright(c) 2017", _version))
+	_logger.Trace(nil, fmt.Sprintf("author: %v", _author))
+	_logger.Trace(nil, fmt.Sprintf("contact: %v", _email))
 }
 
 func main() {
@@ -49,5 +55,24 @@ func main() {
 		os.Exit(-1)
 	}
 
-	Usage()
+	ProInfo()
+
+	var listen string
+	flag.StringVar(&listen, "listen", ":1080", "the http server listen at")
+
+	flag.Usage = func() {
+		_logger.Trace(nil, fmt.Sprintf("Usage: %v [--listen=string] [-h|--help]", os.Args[0]))
+		flag.PrintDefaults()
+		_logger.Trace(nil, fmt.Sprintf("For example:"))
+		_logger.Trace(nil, fmt.Sprintf("	%v --listen=:2033", os.Args[0]))
+	}
+	flag.Parse()
+	
+	conn := NewSock5Conn()
+	
+	_logger.Trace(conn, fmt.Sprintf("the server is listening at %v", listen))
+	if err := conn.Listen(listen); err != nil {
+		_logger.Error(conn, "")
+		os.Exit(-1)
+	}
 }

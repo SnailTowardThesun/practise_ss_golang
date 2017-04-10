@@ -58,7 +58,7 @@ func NewSSLog(tank, path string) (*ssLog, error) {
 
 	if tank == LOG_TANK_CONSOLE {
 		logger = &ssLog{
-			log: log.New(os.Stdout, "", log.Ldate|log.Ltime|log.Lmicroseconds),
+			log: log.New(os.Stdout, "", 0),
 		}
 	} else if tank == LOG_TANK_FILE {
 		if len(path) == 0 {
@@ -67,7 +67,7 @@ func NewSSLog(tank, path string) (*ssLog, error) {
 		}
 
 		logger = &ssLog{
-			log: log.New(os.Stdout, "", log.Ldate|log.Ltime|log.Lmicroseconds),
+			log: log.New(os.Stdout, "", 0),
 		}
 
 		// TODO:FIXME: implement tank as file
@@ -80,31 +80,31 @@ func NewSSLog(tank, path string) (*ssLog, error) {
 }
 
 func (v *ssLog) Info(ctx Context, a ...interface{}) error {
-	return v.Log(ctx, LOG_LEVEL_INFO, a)
+	return v.Log(ctx, LOG_LEVEL_INFO, a...)
 }
 
 func (v *ssLog) Verbose(ctx Context, a ...interface{}) error {
-	return v.Log(ctx, LOG_LEVEL_VERBOSE, a)
+	return v.Log(ctx, LOG_LEVEL_VERBOSE, a...)
 }
 
 func (v *ssLog) Trace(ctx Context, a ...interface{}) error {
-	return v.Log(ctx, LOG_LEVEL_TRACE, a)
+	return v.Log(ctx, LOG_LEVEL_TRACE, a...)
 }
 
 func (v *ssLog) Warn(ctx Context, a ...interface{}) error {
-	return v.Log(ctx, LOG_LEVEL_WARN, a)
+	return v.Log(ctx, LOG_LEVEL_WARN, a...)
 }
 
 func (v *ssLog) Error(ctx Context, a ...interface{}) error {
-	return v.Log(ctx, LOG_LEVEL_ERROR, a)
+	return v.Log(ctx, LOG_LEVEL_ERROR, a...)
 }
 
 func (v *ssLog) Log(ctx Context, logLevel string, a ...interface{}) error {
 	curTime := time.Now().UTC().Format(time.UnixDate)
 	if ctx == nil {
-		a = append([]interface{}{fmt.Sprintf("[%v][%v][%v]", curTime, os.Getpid(), logLevel)}, a...)
+		a = append([]interface{}{fmt.Sprintf("[%v][%v][%v]", curTime, logLevel, os.Getpid())}, a...)
 	} else {
-		a = append([]interface{}{fmt.Sprintf("[%v][%v][%v][%v]", curTime, os.Getpid(), ctx.GetID(), logLevel)}, a...)
+		a = append([]interface{}{fmt.Sprintf("[%v][%v][%v][%v]", curTime, logLevel, os.Getpid(), ctx.GetID())}, a...)
 	}
 
 	v.log.Println(a...)
