@@ -36,43 +36,50 @@ var _author string = "ME_KUN_HAN"
 var _email string = "hanvskun@hotmail.com"
 
 func Initialize() (err error) {
-	if _logger, err = NewSSLog(LOG_TANK_CONSOLE, ""); err != nil {
-		return err
-	}
+		if _logger, err = NewSSLog(LOG_TANK_CONSOLE, ""); err != nil {
+				return err
+		}
 
-	return nil
+		return nil
 }
 
 func ProInfo() {
-	_logger.Trace(nil, fmt.Sprintf("SS_GOLANG %v Copyright(c) 2017", _version))
-	_logger.Trace(nil, fmt.Sprintf("author: %v", _author))
-	_logger.Trace(nil, fmt.Sprintf("contact: %v", _email))
+		_logger.Trace(nil, fmt.Sprintf("SS_GOLANG %v Copyright(c) 2017", _version))
+		_logger.Trace(nil, fmt.Sprintf("author: %v", _author))
+		_logger.Trace(nil, fmt.Sprintf("contact: %v", _email))
 }
 
 func main() {
-	if err := Initialize(); err != nil {
-		fmt.Println("initailize the project failed.")
-		os.Exit(-1)
-	}
+		var err error
+		if err = Initialize(); err != nil {
+				fmt.Println("initailize the project failed.")
+				os.Exit(-1)
+		}
 
-	ProInfo()
+		ProInfo()
 
-	var listen string
-	flag.StringVar(&listen, "listen", ":1080", "the http server listen at")
+		var confPath string
+		flag.StringVar(&confPath, "conf", "./conf/ss.conf", "the path of config file")
 
-	flag.Usage = func() {
-		_logger.Trace(nil, fmt.Sprintf("Usage: %v [--listen=string] [-h|--help]", os.Args[0]))
-		flag.PrintDefaults()
-		_logger.Trace(nil, fmt.Sprintf("For example:"))
-		_logger.Trace(nil, fmt.Sprintf("	%v --listen=:2033", os.Args[0]))
-	}
-	flag.Parse()
-	
-	conn := NewSock5Conn()
-	
-	_logger.Trace(conn, fmt.Sprintf("the server is listening at %v", listen))
-	if err := conn.Listen(listen); err != nil {
-		_logger.Error(conn, "")
-		os.Exit(-1)
-	}
+		flag.Usage = func() {
+				_logger.Trace(nil, fmt.Sprintf("Usage: %v [--conf=string] [-h|--help]", os.Args[0]))
+				flag.PrintDefaults()
+				_logger.Trace(nil, fmt.Sprintf("For example:"))
+				_logger.Trace(nil, fmt.Sprintf("	%v --conf=./conf/ss.conf", os.Args[0]))
+		}
+		flag.Parse()
+
+		var conf *SSConfig
+		if conf, err = NewSSConfig(confPath); err != nil {
+				_logger.Error(nil, fmt.Sprintf("Initialize the configure failed. err is %v", err))
+				os.Exit(-1)
+		}
+
+		var server *Sock5Server
+		if server, err = NewSock5Server(conf); err != nil {
+				_logger.Error(nil, fmt.Sprintf("Create Sock5 server failed. err is %v", err))
+				os.Exit(-1)
+		}
+
+		os.Exit(server.Run())
 }

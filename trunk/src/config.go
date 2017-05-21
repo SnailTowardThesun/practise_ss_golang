@@ -24,52 +24,14 @@ SOFTWARE.
 
 package main
 
-type Sock5Server struct {
+type SSConfig struct {
 }
 
-func NewSock5Server(conf *SSConfig) (*Sock5Server, error) {
-	server := &Sock5Server{}
-
-	if err := server.Initialize(conf); err != nil {
-		return nil, err
-	}
-
-	return server, nil
+func NewSSConfig(path string) (*SSConfig, error) {
+	conf := &SSConfig{}
+	return conf, nil
 }
 
-func (v *Sock5Server) Initialize(conf *SSConfig) (err error) {
-	return
-}
-
-func (v *Sock5Server) Run() (exitCode int) {
-	return 0
-}
-
-type Sock5Connection struct {
-	ConnID uint32
-}
-
-var Sock5ConnBasicID uint32 = 100
-
-func NewSock5Conn() *Sock5Connection {
-	conn := &Sock5Connection{
-		ConnID: Sock5ConnBasicID,
-	}
-
-	// when the basic id is too large, roll over again.
-	if Sock5ConnBasicID > 0xffffff00 {
-		Sock5ConnBasicID = 200
-	} else {
-		Sock5ConnBasicID += 1
-	}
-
-	return conn
-}
-
-func (v *Sock5Connection) GetID() uint32 {
-	return v.ConnID
-}
-
-func (v *Sock5Connection) Listen(port string) (err error) {
-	return
+func (v *SSConfig) Initialize(path string) (err error) {
+	return nil
 }
